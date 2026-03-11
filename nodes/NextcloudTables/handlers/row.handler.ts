@@ -463,7 +463,7 @@ export class RowHandler {
 			const result = await ApiHelper.makeApiRequest<Row>(
 				context,
 				'PUT',
-				`/tables/${tableId}/rows/${rowId}`,
+				`/rows/${rowId}`,
 				{ data: formattedData },
 			);
 
