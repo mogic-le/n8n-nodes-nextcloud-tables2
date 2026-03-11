@@ -29,7 +29,7 @@ export class ViewHandler {
 	 */
 	private static async getAll(context: IExecuteFunctions, itemIndex: number): Promise<View[]> {
 		const tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
-		
+
 		return ApiHelper.makeApiRequest<View[]>(
 			context,
 			'GET',
@@ -42,7 +42,7 @@ export class ViewHandler {
 	 */
 	private static async get(context: IExecuteFunctions, itemIndex: number): Promise<View> {
 		const viewId = ApiHelper.getResourceId(context.getNodeParameter('viewId', itemIndex));
-		
+
 		return ApiHelper.makeApiRequest<View>(
 			context,
 			'GET',
@@ -396,4 +396,4 @@ export class ViewHandler {
 			ApiHelper.handleApiError(error);
 		}
 	}
-} 
+}

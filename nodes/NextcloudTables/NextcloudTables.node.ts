@@ -196,9 +196,9 @@ export class NextcloudTables implements INodeType {
 				const duration = Date.now() - startTime;
 				const resource = this.getNodeParameter('resource', i, 'unknown') as string;
 				const operation = this.getNodeParameter('operation', i, 'unknown') as string;
-				
+
 				NextcloudTablesLogger.operationError(resource, operation, error, duration);
-				
+
 				const nodeError = error as Error;
 				if (this.continueOnFail()) {
 					returnData.push({
@@ -212,4 +212,4 @@ export class NextcloudTables implements INodeType {
 
 		return this.prepareOutputData(returnData);
 	}
-} 
+}

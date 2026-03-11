@@ -36,7 +36,7 @@ export class TableHandler {
 	 */
 	private static async get(context: IExecuteFunctions, itemIndex: number): Promise<Table> {
 		const tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
-		
+
 		return ApiHelper.makeApiRequest<Table>(
 			context,
 			'GET',
@@ -122,4 +122,4 @@ export class TableHandler {
 
 		return { success: true, message: `Tabelle ${tableId} wurde erfolgreich gelöscht` };
 	}
-} 
+}

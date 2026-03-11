@@ -275,4 +275,4 @@ export const importFields: INodeProperties[] = [
 		description: 'Die ID des zu prüfenden Imports',
 		placeholder: 'Import-ID eingeben...',
 	},
-]; 
+];

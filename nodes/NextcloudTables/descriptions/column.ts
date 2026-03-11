@@ -982,4 +982,4 @@ export const columnFields: INodeProperties[] = [
 		default: false,
 		description: 'Ob diese Spalte ein Pflichtfeld ist',
 	},
-]; 
+];

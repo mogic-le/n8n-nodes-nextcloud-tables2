@@ -36,14 +36,14 @@ export class RowHandler {
 
 		let endpoint: string;
 		let tableId: number;
-		
+
 		if (nodeCollection === 'tables') {
 			tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
 			endpoint = `/tables/${tableId}/rows`;
 		} else {
 			const viewId = ApiHelper.getResourceId(context.getNodeParameter('viewId', itemIndex));
 			endpoint = `/views/${viewId}/rows`;
-			
+
 			// Für Views müssen wir die Tabellen-ID ermitteln für Spalten-Info
 			try {
 				const view = await ApiHelper.makeApiRequest<any>(context, 'GET', `/views/${viewId}`);
@@ -92,7 +92,7 @@ export class RowHandler {
 
 			// Client-seitige Nachbearbeitung falls erforderlich
 			let processedRows = rows;
-			
+
 			// Client-seitige Filterung falls Server-API nicht alle Filter unterstützt
 			if (additionalOptions.useFilters) {
 				const filters = context.getNodeParameter('filters.filter', itemIndex, []) as any[];
@@ -122,11 +122,11 @@ export class RowHandler {
 
 		// Nextcloud Tables API Filter-Format (falls unterstützt)
 		const filterQueries: string[] = [];
-		
+
 		for (const filter of filters) {
 			if (filter.columnId && filter.operator) {
 				let filterQuery = '';
-				
+
 				switch (filter.operator) {
 					case 'equals':
 						filterQuery = `${filter.columnId}=${encodeURIComponent(filter.value || '')}`;
@@ -156,13 +156,13 @@ export class RowHandler {
 						filterQuery = `${filter.columnId}!=null`;
 						break;
 				}
-				
+
 				if (filterQuery) {
 					filterQueries.push(filterQuery);
 				}
 			}
 		}
-		
+
 		if (filterQueries.length > 0) {
 			queryParams['filter'] = filterQueries.join('&');
 		}
@@ -177,14 +177,14 @@ export class RowHandler {
 		}
 
 		const sortQueries: string[] = [];
-		
+
 		for (const sort of sorting) {
 			if (sort.columnId && sort.direction) {
 				const direction = sort.direction === 'DESC' ? '-' : '';
 				sortQueries.push(`${direction}${sort.columnId}`);
 			}
 		}
-		
+
 		if (sortQueries.length > 0) {
 			queryParams['sort'] = sortQueries.join(',');
 		}
@@ -199,11 +199,11 @@ export class RowHandler {
 		}
 
 		queryParams['search'] = encodeURIComponent(search.term);
-		
+
 		if (search.searchColumns && search.searchColumns.length > 0) {
 			queryParams['searchColumns'] = search.searchColumns.join(',');
 		}
-		
+
 		if (search.caseSensitive) {
 			queryParams['caseSensitive'] = 'true';
 		}
@@ -264,8 +264,8 @@ export class RowHandler {
 					return false;
 				}
 
-				const cellValue = search.caseSensitive 
-					? String(rowData.value) 
+				const cellValue = search.caseSensitive
+					? String(rowData.value)
 					: String(rowData.value).toLowerCase();
 
 				return cellValue.includes(searchTerm);
@@ -312,19 +312,19 @@ export class RowHandler {
 		// Numerischer Vergleich falls beide Zahlen sind
 		const numA = parseFloat(a);
 		const numB = parseFloat(b);
-		
+
 		if (!isNaN(numA) && !isNaN(numB)) {
 			return numA - numB;
 		}
-		
+
 		// Datum-Vergleich falls beide Daten sind
 		const dateA = new Date(a);
 		const dateB = new Date(b);
-		
+
 		if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
 			return dateA.getTime() - dateB.getTime();
 		}
-		
+
 		// String-Vergleich
 		return String(a || '').localeCompare(String(b || ''));
 	}
@@ -337,7 +337,7 @@ export class RowHandler {
 	private static async get(context: IExecuteFunctions, itemIndex: number): Promise<Row> {
 		const tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
 		const rowId = ApiHelper.validateRowId(context.getNodeParameter('rowId', itemIndex));
-		
+
 		try {
 			// Alle Zeilen der Tabelle abrufen
 			const allRows = await ApiHelper.makeApiRequest<Row[]>(
@@ -348,14 +348,14 @@ export class RowHandler {
 
 			// Die gewünschte Zeile finden
 			const targetRow = allRows.find(row => row.id === rowId);
-			
+
 			if (!targetRow) {
 				throw new Error(`Zeile mit ID ${rowId} wurde in Tabelle ${tableId} nicht gefunden`);
 			}
 
 			// Spalten-Info für bessere Formatierung laden
 			const columns = await ApiHelper.getTableColumns(context, tableId);
-			
+
 			return this.formatRowForOutput(targetRow, columns);
 		} catch (error) {
 			ApiHelper.handleApiError(error);
@@ -379,14 +379,14 @@ export class RowHandler {
 
 		let endpoint: string;
 		let tableId: number;
-		
+
 		if (nodeCollection === 'tables') {
 			tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
 			endpoint = `/tables/${tableId}/rows`;
 		} else {
 			const viewId = ApiHelper.getResourceId(context.getNodeParameter('viewId', itemIndex));
 			endpoint = `/views/${viewId}/rows`;
-			
+
 			// Für Views müssen wir die Tabellen-ID ermitteln
 			try {
 				const view = await ApiHelper.makeApiRequest<any>(context, 'GET', `/views/${viewId}`);
@@ -405,13 +405,13 @@ export class RowHandler {
 
 		// Spalten-Info laden für korrekte Datenformatierung
 		const columns = await ApiHelper.getTableColumns(context, tableId);
-		
+
 		// Erweiterte Formatierung mit Validierung
 		const formatOptions: FormatOptions = {
 			validateSelections: true,
 			dateTimeFormat: 'iso'
 		};
-		
+
 		try {
 			const formattedData = ApiHelper.formatRowData(data, columns, formatOptions);
 
@@ -446,7 +446,7 @@ export class RowHandler {
 
 		// Spalten-Info laden für korrekte Datenformatierung
 		const columns = await ApiHelper.getTableColumns(context, tableId);
-		
+
 		// Erweiterte Formatierung mit Validierung
 		const formatOptions: FormatOptions = {
 			validateSelections: true,
@@ -492,7 +492,7 @@ export class RowHandler {
 			for (const item of row.data) {
 				const column = columns.find(col => col.id === item.columnId);
 				const columnName = column?.title || `column_${item.columnId}`;
-				
+
 				formatted.data[columnName] = this.formatValueForOutput(item.value, column);
 			}
 		}
@@ -586,7 +586,7 @@ export class RowHandler {
 				}
 				const viewId = parseInt(source.viewId);
 				endpoint = `/views/${viewId}/rows`;
-				
+
 				// Für Views müssen wir die Tabellen-ID ermitteln
 				const view = await ApiHelper.makeApiRequest<any>(context, 'GET', `/views/${viewId}`);
 				tableId = view.tableId;
@@ -670,7 +670,7 @@ export class RowHandler {
 				}
 				const viewId = parseInt(source.viewId);
 				endpoint = `/views/${viewId}/rows`;
-				
+
 				// Für Views müssen wir die Tabellen-ID ermitteln
 				const view = await ApiHelper.makeApiRequest<any>(context, 'GET', `/views/${viewId}`);
 				tableId = view.tableId;
@@ -743,7 +743,7 @@ export class RowHandler {
 
 			// Client-seitige Nachbearbeitung falls erforderlich
 			let processedRows = rows;
-			
+
 			// Client-seitige Filterung falls Server-API nicht alle Filter unterstützt
 			if (queryConfig.query?.filters && queryConfig.query.filters.length > 0) {
 				const filters = queryConfig.query.filters
@@ -835,4 +835,4 @@ export class RowHandler {
 			ApiHelper.handleApiError(error);
 		}
 	}
-} 
+}

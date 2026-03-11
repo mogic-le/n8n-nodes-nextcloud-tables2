@@ -217,4 +217,4 @@ export const tableFields: INodeProperties[] = [
 		default: false,
 		description: 'Ob die Tabelle archiviert werden soll',
 	},
-]; 
+];

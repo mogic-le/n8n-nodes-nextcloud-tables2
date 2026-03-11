@@ -14,7 +14,7 @@ export class NodeLoadOptions {
 	static async getTables(context: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 		try {
 			const tables = await ApiHelper.makeApiRequest<Table[]>(context, 'GET', '/tables');
-			
+
 			return tables.map((table) => ({
 				name: table.title || `Tabelle ${table.id}`,
 				value: table.id.toString(),
@@ -37,10 +37,10 @@ export class NodeLoadOptions {
 	static async getViews(context: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 		try {
 			const tableId = context.getCurrentNodeParameter('tableId') as any;
-			
+
 			// Verbesserte Extraktion mit Validierung
 			let extractedTableId: any;
-			
+
 			if (!tableId) {
 				return [
 					{
@@ -50,7 +50,7 @@ export class NodeLoadOptions {
 					},
 				];
 			}
-			
+
 			// Resource Locator Struktur
 			if (typeof tableId === 'object' && tableId !== null) {
 				if (tableId.__rl === true || tableId.mode) {
@@ -61,7 +61,7 @@ export class NodeLoadOptions {
 			} else {
 				extractedTableId = tableId;
 			}
-			
+
 			// Validierung der extrahierten ID
 			if (!extractedTableId || extractedTableId === '' || extractedTableId === 'undefined') {
 				return [
@@ -72,7 +72,7 @@ export class NodeLoadOptions {
 					},
 				];
 			}
-			
+
 			// Stelle sicher, dass es eine gültige Zahl ist
 			const numericTableId = parseInt(extractedTableId, 10);
 			if (isNaN(numericTableId) || numericTableId <= 0) {
@@ -86,8 +86,8 @@ export class NodeLoadOptions {
 			}
 
 			const views = await ApiHelper.makeApiRequest<View[]>(
-				context, 
-				'GET', 
+				context,
+				'GET',
 				`/tables/${numericTableId}/views`
 			);
 
@@ -113,10 +113,10 @@ export class NodeLoadOptions {
 	static async getColumns(context: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 		try {
 			const tableId = context.getCurrentNodeParameter('tableId') as any;
-			
+
 			// Verbesserte Extraktion mit Validierung
 			let extractedTableId: any;
-			
+
 			if (!tableId) {
 				return [
 					{
@@ -126,7 +126,7 @@ export class NodeLoadOptions {
 					},
 				];
 			}
-			
+
 			// Resource Locator Struktur
 			if (typeof tableId === 'object' && tableId !== null) {
 				if (tableId.__rl === true || tableId.mode) {
@@ -137,7 +137,7 @@ export class NodeLoadOptions {
 			} else {
 				extractedTableId = tableId;
 			}
-			
+
 			// Validierung der extrahierten ID
 			if (!extractedTableId || extractedTableId === '' || extractedTableId === 'undefined') {
 				return [
@@ -148,7 +148,7 @@ export class NodeLoadOptions {
 					},
 				];
 			}
-			
+
 			// Stelle sicher, dass es eine gültige Zahl ist
 			const numericTableId = parseInt(extractedTableId, 10);
 			if (isNaN(numericTableId) || numericTableId <= 0) {
@@ -162,8 +162,8 @@ export class NodeLoadOptions {
 			}
 
 			const columns = await ApiHelper.makeApiRequest<Column[]>(
-				context, 
-				'GET', 
+				context,
+				'GET',
 				`/tables/${numericTableId}/columns`
 			);
 
@@ -191,19 +191,19 @@ export class NodeLoadOptions {
 			const credentials = await context.getCredentials('nextcloudTablesApi');
 			const currentUser = credentials.username as string;
 			const results: Array<{ name: string; value: string }> = [];
-			
+
 			// Füge den aktuellen Benutzer immer als ersten Eintrag hinzu
 			const currentUserDisplayName = `${currentUser} (Sie selbst)`;
 			results.push({ name: currentUserDisplayName, value: currentUser });
-			
+
 			try {
 				// Verwende den Sharee-Endpunkt, um weitere Benutzer zu suchen
 				const searchTerm = '';
 				const endpoint = `/sharees?search=${encodeURIComponent(searchTerm)}&itemType=0&perPage=50`;
-				
+
 				const response = await ApiHelper.nextcloudShareeApiRequest(context, 'GET', endpoint);
 				const shareeData = response as { users?: Array<{ value: { shareWith: string; shareWithDisplayName: string } }> };
-				
+
 				if (shareeData.users && shareeData.users.length > 0) {
 					// Füge Sharee-Benutzer hinzu (aber nicht den aktuellen Benutzer doppelt)
 					for (const user of shareeData.users) {
@@ -220,7 +220,7 @@ export class NodeLoadOptions {
 				try {
 					const usersResponse = await ApiHelper.nextcloudOcsUsersApiRequest(context, 'GET', '/users');
 					const usersData = usersResponse as { users?: string[] };
-					
+
 					if (usersData.users && usersData.users.length > 0) {
 						// Füge alle Benutzer hinzu (aber nicht den aktuellen Benutzer doppelt)
 						for (const userId of usersData.users) {
@@ -236,12 +236,12 @@ export class NodeLoadOptions {
 					// Stille Fehlerbehandlung - zeige nur aktuellen Benutzer
 				}
 			}
-			
+
 			// Entferne Duplikate und begrenze auf 50 Ergebnisse
-			const uniqueResults = results.filter((result, index, self) => 
+			const uniqueResults = results.filter((result, index, self) =>
 				index === self.findIndex(r => r.value === result.value)
 			).slice(0, 50);
-			
+
 			return uniqueResults;
 		} catch (error: any) {
 			return [
@@ -260,15 +260,15 @@ export class NodeLoadOptions {
 	static async getGroups(context: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 		try {
 			const results: Array<{ name: string; value: string }> = [];
-			
+
 			try {
 				// Verwende den Sharee-Endpunkt, um Gruppen zu suchen
 				const searchTerm = '';
 				const endpoint = `/sharees?search=${encodeURIComponent(searchTerm)}&itemType=1&perPage=50`;
-				
+
 				const response = await ApiHelper.nextcloudShareeApiRequest(context, 'GET', endpoint);
 				const shareeData = response as { groups?: Array<{ value: { shareWith: string; shareWithDisplayName: string } }> };
-				
+
 				if (shareeData.groups && shareeData.groups.length > 0) {
 					for (const group of shareeData.groups) {
 						results.push({
@@ -282,7 +282,7 @@ export class NodeLoadOptions {
 				try {
 					const groupsResponse = await ApiHelper.nextcloudOcsUsersApiRequest(context, 'GET', '/groups');
 					const groupsData = groupsResponse as { groups?: string[] };
-					
+
 					if (groupsData.groups && groupsData.groups.length > 0) {
 						for (const groupId of groupsData.groups) {
 							results.push({
@@ -295,12 +295,12 @@ export class NodeLoadOptions {
 					// Stille Fehlerbehandlung
 				}
 			}
-			
+
 			// Entferne Duplikate und begrenze auf 50 Ergebnisse
-			const uniqueResults = results.filter((result, index, self) => 
+			const uniqueResults = results.filter((result, index, self) =>
 				index === self.findIndex(r => r.value === result.value)
 			).slice(0, 50);
-			
+
 			return uniqueResults;
 		} catch (error: any) {
 			return [
@@ -319,7 +319,7 @@ export class NodeLoadOptions {
 	static async getShareReceivers(context: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 		try {
 			const shareType = context.getCurrentNodeParameter('shareType') as string;
-			
+
 			if (shareType === 'user') {
 				return this.getUsers(context);
 			} else if (shareType === 'group') {
@@ -330,7 +330,7 @@ export class NodeLoadOptions {
 					this.getUsers(context),
 					this.getGroups(context)
 				]);
-				
+
 				return [
 					...users.map(user => ({ ...user, description: '👤 ' + (user.description || 'Benutzer') })),
 					...groups.map(group => ({ ...group, description: '👥 ' + (group.description || 'Gruppe') }))
@@ -355,7 +355,7 @@ export class NodeListSearch {
 	static async getTables(context: ILoadOptionsFunctions, filter?: string): Promise<INodeListSearchResult> {
 		try {
 			const tables = await ApiHelper.makeApiRequest<Table[]>(context, 'GET', '/tables');
-			
+
 			let filteredTables = tables;
 			if (filter) {
 				const filterLower = filter.toLowerCase();
@@ -384,10 +384,10 @@ export class NodeListSearch {
 	static async getViews(context: ILoadOptionsFunctions, filter?: string): Promise<INodeListSearchResult> {
 		try {
 			const tableId = context.getCurrentNodeParameter('tableId') as any;
-			
+
 			// Verbesserte Extraktion mit Validierung
 			let extractedTableId: any;
-			
+
 			if (!tableId) {
 				return {
 					results: [
@@ -399,7 +399,7 @@ export class NodeListSearch {
 					],
 				};
 			}
-			
+
 			// Resource Locator Struktur
 			if (typeof tableId === 'object' && tableId !== null) {
 				if (tableId.__rl === true || tableId.mode) {
@@ -410,7 +410,7 @@ export class NodeListSearch {
 			} else {
 				extractedTableId = tableId;
 			}
-			
+
 			// Validierung der extrahierten ID
 			if (!extractedTableId || extractedTableId === '' || extractedTableId === 'undefined') {
 				return {
@@ -423,7 +423,7 @@ export class NodeListSearch {
 					],
 				};
 			}
-			
+
 			// Stelle sicher, dass es eine gültige Zahl ist
 			const numericTableId = parseInt(extractedTableId, 10);
 			if (isNaN(numericTableId) || numericTableId <= 0) {
@@ -439,11 +439,11 @@ export class NodeListSearch {
 			}
 
 			const views = await ApiHelper.makeApiRequest<View[]>(
-				context, 
-				'GET', 
+				context,
+				'GET',
 				`/tables/${numericTableId}/views`
 			);
-			
+
 			let filteredViews = views;
 			if (filter) {
 				const filterLower = filter.toLowerCase();
@@ -480,10 +480,10 @@ export class NodeListSearch {
 	static async getColumns(context: ILoadOptionsFunctions, filter?: string): Promise<INodeListSearchResult> {
 		try {
 			const tableId = context.getCurrentNodeParameter('tableId') as any;
-			
+
 			// Verbesserte Extraktion mit Validierung
 			let extractedTableId: any;
-			
+
 			if (!tableId) {
 				return {
 					results: [
@@ -495,7 +495,7 @@ export class NodeListSearch {
 					],
 				};
 			}
-			
+
 			// Resource Locator Struktur
 			if (typeof tableId === 'object' && tableId !== null) {
 				if (tableId.__rl === true || tableId.mode) {
@@ -506,7 +506,7 @@ export class NodeListSearch {
 			} else {
 				extractedTableId = tableId;
 			}
-			
+
 			// Validierung der extrahierten ID
 			if (!extractedTableId || extractedTableId === '' || extractedTableId === 'undefined') {
 				return {
@@ -519,7 +519,7 @@ export class NodeListSearch {
 					],
 				};
 			}
-			
+
 			// Stelle sicher, dass es eine gültige Zahl ist
 			const numericTableId = parseInt(extractedTableId, 10);
 			if (isNaN(numericTableId) || numericTableId <= 0) {
@@ -535,11 +535,11 @@ export class NodeListSearch {
 			}
 
 			const columns = await ApiHelper.makeApiRequest<Column[]>(
-				context, 
-				'GET', 
+				context,
+				'GET',
 				`/tables/${numericTableId}/columns`
 			);
-			
+
 			let filteredColumns = columns;
 			if (filter) {
 				const filterLower = filter.toLowerCase();
@@ -569,4 +569,4 @@ export class NodeListSearch {
 			};
 		}
 	}
-} 
+}

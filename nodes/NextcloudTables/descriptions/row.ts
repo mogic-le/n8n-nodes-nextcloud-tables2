@@ -251,7 +251,7 @@ export const rowFields: INodeProperties[] = [
 		description: 'Konfiguration für Zeilen-Update',
 	},
 
-	// Query-Optionen für getAllAIFriendly  
+	// Query-Optionen für getAllAIFriendly
 	{
 		displayName: 'Abfrage-Optionen (AI-Friendly)',
 		name: 'queryConfig',
@@ -1047,4 +1047,4 @@ export const rowFields: INodeProperties[] = [
 		],
 		description: 'Volltext-Suche in den Zeilen-Daten',
 	},
-]; 
+];

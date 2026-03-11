@@ -620,4 +620,4 @@ export const viewFields: INodeProperties[] = [
 		],
 		description: 'Sortier-Regeln für die View',
 	},
-]; 
+];

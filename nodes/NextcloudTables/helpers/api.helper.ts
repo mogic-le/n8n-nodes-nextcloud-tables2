@@ -16,7 +16,7 @@ import { DataFormatter, FormatOptions } from './data.formatter';
  */
 export class NextcloudTablesLogger {
 	private static readonly NODE_PREFIX = '[N8N-NEXTCLOUD-TABLES]';
-	
+
 	/**
 	 * Debug-Level Logging (nur in Development/Verbose)
 	 */
@@ -25,7 +25,7 @@ export class NextcloudTablesLogger {
 		const logMessage = `${this.NODE_PREFIX} [DEBUG] [${context}] ${message}`;
 		console.debug(`${timestamp} ${logMessage}`, data ? JSON.stringify(data, null, 2) : '');
 	}
-	
+
 	/**
 	 * Info-Level Logging für wichtige Operationen
 	 */
@@ -34,7 +34,7 @@ export class NextcloudTablesLogger {
 		const logMessage = `${this.NODE_PREFIX} [INFO] [${context}] ${message}`;
 		console.log(`${timestamp} ${logMessage}`, data ? JSON.stringify(data, null, 2) : '');
 	}
-	
+
 	/**
 	 * Warning-Level Logging für potentielle Probleme
 	 */
@@ -43,7 +43,7 @@ export class NextcloudTablesLogger {
 		const logMessage = `${this.NODE_PREFIX} [WARN] [${context}] ${message}`;
 		console.warn(`${timestamp} ${logMessage}`, data ? JSON.stringify(data, null, 2) : '');
 	}
-	
+
 	/**
 	 * Error-Level Logging für Fehler
 	 */
@@ -55,13 +55,13 @@ export class NextcloudTablesLogger {
 			stack: error.stack,
 			statusCode: error.statusCode || error.response?.status
 		} : null;
-		
+
 		console.error(`${timestamp} ${logMessage}`, {
 			error: errorInfo,
 			additionalData: data
 		});
 	}
-	
+
 	/**
 	 * API-Request Logging für Debugging
 	 */
@@ -73,7 +73,7 @@ export class NextcloudTablesLogger {
 			bodySize: body ? JSON.stringify(body).length : 0
 		});
 	}
-	
+
 	/**
 	 * API-Response Logging für Debugging
 	 */
@@ -85,7 +85,7 @@ export class NextcloudTablesLogger {
 			duration: duration ? `${duration}ms` : 'unknown'
 		});
 	}
-	
+
 	/**
 	 * Operation-Start Logging
 	 */
@@ -96,7 +96,7 @@ export class NextcloudTablesLogger {
 			context
 		});
 	}
-	
+
 	/**
 	 * Operation-Success Logging
 	 */
@@ -109,7 +109,7 @@ export class NextcloudTablesLogger {
 			resultSize: result && typeof result === 'object' ? Object.keys(result).length : 0
 		});
 	}
-	
+
 	/**
 	 * Operation-Error Logging
 	 */
@@ -120,7 +120,7 @@ export class NextcloudTablesLogger {
 			duration: duration ? `${duration}ms` : 'unknown'
 		});
 	}
-	
+
 	/**
 	 * Validation-Error Logging
 	 */
@@ -146,10 +146,10 @@ export class ApiHelper {
 		useQueryParams: boolean = false,
 	): Promise<T> {
 		const startTime = Date.now();
-		
+
 		// Log API Request
 		NextcloudTablesLogger.apiRequest(method, endpoint, body);
-		
+
 		const credentials = await context.getCredentials('nextcloudTablesApi');
 		const serverUrl = (credentials.serverUrl as string).replace(/\/$/, '');
 
@@ -186,15 +186,15 @@ export class ApiHelper {
 		try {
 			const response = await context.helpers.request(options);
 			const duration = Date.now() - startTime;
-			
+
 			// Log successful response
 			NextcloudTablesLogger.apiResponse(method, endpoint, 200, duration);
-			
+
 			return response;
 		} catch (error: any) {
 			const duration = Date.now() - startTime;
 			const statusCode = error.statusCode || error.response?.status;
-			
+
 			// Log error response
 			NextcloudTablesLogger.apiResponse(method, endpoint, statusCode, duration);
 			NextcloudTablesLogger.error('API-ERROR', `${method} ${endpoint} failed`, error, {
@@ -202,7 +202,7 @@ export class ApiHelper {
 				duration,
 				url: options.url
 			});
-			
+
 			if (error.statusCode) {
 				switch (error.statusCode) {
 					case 400:
@@ -294,8 +294,8 @@ export class ApiHelper {
 	 * Formatiert Zeilendaten für API-Requests
 	 */
 	static formatRowData(
-		data: Record<string, any>, 
-		columns?: Column[], 
+		data: Record<string, any>,
+		columns?: Column[],
 		options: FormatOptions = {}
 	): Record<string, any> {
 		return DataFormatter.formatRowData(data, columns, options);
@@ -306,13 +306,13 @@ export class ApiHelper {
 	 */
 	static formatRowDataSimple(data: Record<string, any>): Record<string, any> {
 		const formattedData: Record<string, any> = {};
-		
+
 		for (const [key, value] of Object.entries(data)) {
 			if (value !== undefined && value !== null && value !== '') {
 				formattedData[key] = value;
 			}
 		}
-		
+
 		return formattedData;
 	}
 
@@ -345,11 +345,11 @@ export class ApiHelper {
 		});
 
 		// Robuste Validierung - Alle möglichen NaN-Quellen abfangen
-		if (resourceLocator === null || resourceLocator === undefined || 
+		if (resourceLocator === null || resourceLocator === undefined ||
 			resourceLocator === 'null' || resourceLocator === 'undefined' ||
-			resourceLocator === 'NaN' || 
+			resourceLocator === 'NaN' ||
 			(typeof resourceLocator === 'number' && isNaN(resourceLocator))) {
-			
+
 			NextcloudTablesLogger.validationError('RESOURCE-LOCATOR', 'resourceLocator', resourceLocator, 'Resource Locator ist null, undefined oder NaN');
 			throw new Error('[N8N-NEXTCLOUD-TABLES] Resource Locator ist erforderlich aber nicht gesetzt oder ungültig');
 		}
@@ -362,7 +362,7 @@ export class ApiHelper {
 			NextcloudTablesLogger.debug('RESOURCE-VALIDATION', 'Valid number resource locator', { id: resourceLocator });
 			return resourceLocator;
 		}
-		
+
 		if (typeof resourceLocator === 'string') {
 			if (resourceLocator.trim() === '') {
 				NextcloudTablesLogger.validationError('RESOURCE-LOCATOR', 'resourceLocator', resourceLocator, 'String ist leer');
@@ -376,20 +376,20 @@ export class ApiHelper {
 			NextcloudTablesLogger.debug('RESOURCE-VALIDATION', 'Valid string resource locator converted', { original: resourceLocator, converted: id });
 			return id;
 		}
-		
+
 		if (resourceLocator && typeof resourceLocator === 'object') {
 			// Prüfe __rl Struktur
 			if (resourceLocator.__rl === true) {
 				const value = resourceLocator.value;
 				const mode = resourceLocator.mode;
-				
+
 				NextcloudTablesLogger.debug('RESOURCE-VALIDATION', 'Processing __rl resource locator', { mode, value });
-				
+
 				if (!value || value === '') {
 					NextcloudTablesLogger.validationError('RESOURCE-LOCATOR', 'resourceLocator.value', value, `Value ist leer bei mode: ${mode}`);
 					throw new Error(`[N8N-NEXTCLOUD-TABLES] Resource Locator Value ist leer (mode: ${mode}) - Eine ID ist erforderlich`);
 				}
-				
+
 				if (mode === 'id' || mode === 'list') {
 					const id = parseInt(value, 10);
 					if (isNaN(id) || id <= 0) {
@@ -403,14 +403,14 @@ export class ApiHelper {
 					throw new Error(`[N8N-NEXTCLOUD-TABLES] Unbekannter Resource Locator Mode: ${mode}`);
 				}
 			}
-			
+
 			// Legacy Format Support
 			if (resourceLocator.mode && resourceLocator.value) {
 				const value = resourceLocator.value;
 				const mode = resourceLocator.mode;
-				
+
 				NextcloudTablesLogger.debug('RESOURCE-VALIDATION', 'Processing legacy resource locator', { mode, value });
-				
+
 				if (!value || value === '') {
 					NextcloudTablesLogger.validationError('RESOURCE-LOCATOR', 'resourceLocator.value', value, 'Legacy value ist leer');
 					throw new Error('[N8N-NEXTCLOUD-TABLES] Resource Locator Value ist leer - Eine ID ist erforderlich');
@@ -424,7 +424,7 @@ export class ApiHelper {
 				return id;
 			}
 		}
-		
+
 		NextcloudTablesLogger.validationError('RESOURCE-LOCATOR', 'resourceLocator', resourceLocator, 'Unbekanntes Format');
 		throw new Error(`[N8N-NEXTCLOUD-TABLES] Ungültiger Resource Locator Format: ${JSON.stringify(resourceLocator)}`);
 	}
@@ -437,14 +437,14 @@ export class ApiHelper {
 		if (statusCode >= 400 && statusCode < 500 && statusCode !== 408 && statusCode !== 429) {
 			return true;
 		}
-		
+
 		const errorMessage = error.message?.toLowerCase() || '';
-		if (errorMessage.includes('unauthorized') || 
+		if (errorMessage.includes('unauthorized') ||
 			errorMessage.includes('forbidden') ||
 			errorMessage.includes('not found')) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -461,13 +461,13 @@ export class ApiHelper {
 	static handleApiError(error: any): never {
 		const statusCode = error.response?.status || error.statusCode;
 		const errorMessage = error.response?.body?.ocs?.meta?.message || error.message;
-		
+
 		// Log the error for debugging
 		NextcloudTablesLogger.error('API-ERROR-HANDLER', `HTTP ${statusCode} Error`, error, {
 			statusCode,
 			errorMessage
 		});
-		
+
 		switch (statusCode) {
 			case 400:
 				throw new Error(`[N8N-NEXTCLOUD-TABLES] Ungültige Anfrage: ${errorMessage || 'Überprüfen Sie Ihre Eingabedaten'}`);
@@ -605,4 +605,4 @@ export class ApiHelper {
 			);
 		}
 	}
-} 
+}

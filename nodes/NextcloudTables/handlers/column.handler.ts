@@ -29,7 +29,7 @@ export class ColumnHandler {
 	 */
 	private static async getAll(context: IExecuteFunctions, itemIndex: number): Promise<Column[]> {
 		const tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
-		
+
 		return ApiHelper.makeApiRequest<Column[]>(
 			context,
 			'GET',
@@ -42,7 +42,7 @@ export class ColumnHandler {
 	 */
 	private static async get(context: IExecuteFunctions, itemIndex: number): Promise<Column> {
 		const columnId = ApiHelper.getResourceId(context.getNodeParameter('columnId', itemIndex));
-		
+
 		return ApiHelper.makeApiRequest<Column>(
 			context,
 			'GET',
@@ -100,19 +100,19 @@ export class ColumnHandler {
 	}
 
 	/**
-	 * Eine neue Spalte erstellen (KI-Friendly Version) 
+	 * Eine neue Spalte erstellen (KI-Friendly Version)
 	 * Alle Parameter sind direkt verfügbar ohne verschachtelte Strukturen
 	 */
 	private static async createAIFriendly(context: IExecuteFunctions, itemIndex: number): Promise<Column> {
 		const tableIdAI = context.getNodeParameter('tableIdAI', itemIndex, '') as string;
-		
+
 		// Validierung: tableIdAI ist für createAIFriendly erforderlich
 		if (!tableIdAI) {
 			throw new Error('tableIdAI ist für createAIFriendly Operation erforderlich');
 		}
-		
+
 		const tableId = ApiHelper.getResourceId(tableIdAI);
-		
+
 		// Basis-Parameter direkt abrufen (alle immer verfügbar)
 		const type = context.getNodeParameter('columnType', itemIndex) as string;
 		const title = context.getNodeParameter('columnTitle', itemIndex) as string;
@@ -220,14 +220,14 @@ export class ColumnHandler {
 	 */
 	private static async updateAIFriendly(context: IExecuteFunctions, itemIndex: number): Promise<Column> {
 		const columnIdAI = context.getNodeParameter('columnIdAI', itemIndex, '') as string;
-		
+
 		// Validierung: columnIdAI ist für updateAIFriendly erforderlich
 		if (!columnIdAI) {
 			throw new Error('columnIdAI ist für updateAIFriendly Operation erforderlich');
 		}
-		
+
 		const columnId = ApiHelper.getResourceId(columnIdAI);
-		
+
 		// Basis-Parameter direkt abrufen (alle immer verfügbar)
 		const type = context.getNodeParameter('columnType', itemIndex, '') as string;
 		const title = context.getNodeParameter('columnTitle', itemIndex, '') as string;
@@ -411,7 +411,7 @@ export class ColumnHandler {
 	 */
 	private static addTextParametersFromConfig(context: IExecuteFunctions, itemIndex: number, body: any): void {
 		const textConfig = context.getNodeParameter('textConfig.settings', itemIndex, {}) as any;
-		
+
 		// Subtype ist erforderlich für die API
 		body.subtype = textConfig.subtype || 'line';
 
@@ -625,7 +625,7 @@ export class ColumnHandler {
 
 		// Basierend auf usergroupType die entsprechenden Flags setzen
 		body.usergroupMultipleItems = usergroupMultiple;
-		
+
 		if (usergroupType === 'user') {
 			body.usergroupSelectUsers = true;
 			body.usergroupSelectGroups = false;
@@ -637,9 +637,9 @@ export class ColumnHandler {
 			body.usergroupSelectUsers = true;
 			body.usergroupSelectGroups = true;
 		}
-		
+
 		// Standardwerte für andere Optionen
 		body.usergroupSelectTeams = false;
 		body.showUserStatus = false;
 	}
-} 
+}

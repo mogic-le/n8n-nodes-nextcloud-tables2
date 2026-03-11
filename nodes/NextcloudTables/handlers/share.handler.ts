@@ -23,7 +23,7 @@ export class ShareHandler {
 	 */
 	private static async getAll(context: IExecuteFunctions, itemIndex: number): Promise<Share[]> {
 		const tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
-		
+
 		return ApiHelper.makeApiRequest<Share[]>(
 			context,
 			'GET',
@@ -37,7 +37,7 @@ export class ShareHandler {
 	private static async create(context: IExecuteFunctions, itemIndex: number): Promise<Share> {
 		const tableId = ApiHelper.getResourceId(context.getNodeParameter('tableId', itemIndex));
 		const shareType = context.getNodeParameter('shareType', itemIndex) as string;
-		
+
 		// Receiver abhängig vom Share-Typ extrahieren
 		let receiver: string;
 		if (shareType === 'user') {
@@ -47,7 +47,7 @@ export class ShareHandler {
 		} else {
 			throw new Error(`Unbekannter Share-Typ: ${shareType}`);
 		}
-		
+
 		const permissionsCollection = context.getNodeParameter('permissions', itemIndex, {}) as any;
 		const additionalOptions = context.getNodeParameter('additionalOptions', itemIndex, {}) as any;
 
@@ -144,15 +144,15 @@ export class ShareHandler {
 		}
 
 		// Mindestens eine Berechtigung muss true sein
-		return permissions.read || 
-			   permissions.create || 
-			   permissions.update || 
-			   permissions.delete || 
+		return permissions.read ||
+			   permissions.create ||
+			   permissions.update ||
+			   permissions.delete ||
 			   permissions.manage;
 	}
 
 	/**
-	 * Hilfsfunktion: Share-Typ validieren  
+	 * Hilfsfunktion: Share-Typ validieren
 	 */
 	private static validateShareType(shareType: string): boolean {
 		const validTypes = ['user', 'group'];
@@ -172,4 +172,4 @@ export class ShareHandler {
 		const receiverRegex = /^[a-zA-Z0-9_-]+$/;
 		return receiverRegex.test(receiver.trim());
 	}
-} 
+}
