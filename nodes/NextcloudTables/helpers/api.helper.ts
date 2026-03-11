@@ -153,7 +153,7 @@ export class ApiHelper {
 		const credentials = await context.getCredentials('nextcloudTablesApi');
 		const serverUrl = (credentials.serverUrl as string).replace(/\/$/, '');
 
-		let url = `${serverUrl}/index.php/apps/tables/api/2${endpoint}`;
+		let url = `${serverUrl}/index.php/apps/tables/api/1${endpoint}`;
 
 		if (useQueryParams && body) {
 			const queryParams = new URLSearchParams();
