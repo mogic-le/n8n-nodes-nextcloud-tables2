@@ -191,7 +191,11 @@ export class NextcloudTables implements INodeType {
 				const duration = Date.now() - startTime;
 				NextcloudTablesLogger.operationSuccess(resource, operation, duration, result);
 
-				returnData.push({ json: result });
+				if (Array.isArray(result)) {
+					result.forEach((element) => returnData.push({ json: element }));
+				} else {
+					returnData.push({ json: result });
+				}
 			} catch (error) {
 				const duration = Date.now() - startTime;
 				const resource = this.getNodeParameter('resource', i, 'unknown') as string;
