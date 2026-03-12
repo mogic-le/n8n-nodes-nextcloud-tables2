@@ -1,4 +1,4 @@
-# n8n-nodes-nextcloud-tables
+# n8n-nodes-nextcloud-tables2
 
 Ein n8n Node für die Integration mit Nextcloud Tables.
 
@@ -12,7 +12,7 @@ Ein n8n Node für die Integration mit Nextcloud Tables.
 ## Installation
 
 ```bash
-npm install n8n-nodes-nextcloud-tables
+npm install n8n-nodes-nextcloud-tables2
 ```
 
 Starten Sie n8n neu, um die neue Node zu laden.
@@ -166,9 +166,9 @@ Operation: "Spalte Erstellen (KI-Friendly)"
 ## **Vollständige API-Abdeckung**
 
 ### **Kompatibilität**
-- **Nextcloud**: 28+ (getestet)
-- **Tables App**: 0.6+ (getestet)
-- **n8n**: 1.0+ (getestet)
+- **Nextcloud**: 31 (getestet)
+- **Tables App**: 1.0.3 (getestet)
+- **n8n**: 2.11 (getestet)
 
 ### **Technische Details**
 - **API Version**: Hybrid v1/v2 (optimal je nach Operation)

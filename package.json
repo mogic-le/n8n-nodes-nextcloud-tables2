@@ -1,31 +1,27 @@
 {
-  "name": "n8n-nodes-nextcloud-tables",
-  "version": "2.4.6",
-  "description": "Production-Ready n8n Node für Nextcloud Tables - Vollständige API-Abdeckung mit erweiterten Filtern, Multi-Column-Sorting, CSV-Import und professioneller Datenvalidierung",
+  "name": "n8n-nodes-nextcloud-tables2",
+  "description": "Fetch Nextcloud Tables data from N8N.io",
   "keywords": [
     "n8n-community-node-package",
-    "n8n-node-nextcloud",
     "nextcloud",
     "tables",
     "database",
-    "data-management",
-    "professional",
-    "csv-import",
-    "filtering",
-    "sorting",
-    "data-validation",
-    "collaboration",
     "workflow-automation"
   ],
   "license": "MIT",
-  "homepage": "https://n8n.io",
-  "author": {
-    "name": "Niko Terschawetz",
-    "email": "nt@terschaweb.de"
-  },
+  "contributors": [
+    {
+      "name": "Christian Weiske",
+      "email": "weiske@mogic.com"
+    },
+    {
+      "name": "Niko Terschawetz",
+      "email": "nt@terschaweb.de"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/terschawebIT/n8n-nodes-nextcloud-tables.git"
+    "url": "git+https://github.com/mogic-le/n8n-nodes-nextcloud-tables2.git"
   },
   "main": "index.js",
   "scripts": {
