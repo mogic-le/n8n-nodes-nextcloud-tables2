@@ -87,7 +87,7 @@ export interface Column {
 	textAllowedPattern?: string;
 	textMaxLength?: number;
 	// Selection column specific
-	selectionOptions?: string;
+	selectionOptions?: Array<{ id: number; label: string }>;
 	selectionDefault?: string;
 	// DateTime column specific
 	datetimeDefault?: string;

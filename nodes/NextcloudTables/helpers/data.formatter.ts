@@ -163,27 +163,36 @@ export class DataFormatter {
 		}
 	}
 
-	/**
-	 * Formatiert Selection-Spalten
-	 */
 	private static formatSelectionValue(value: any, column: Column, options: FormatOptions): string | string[] {
 		if (!value) {
 			return column.selectionDefault || '';
 		}
 
-		// Optionen validieren falls verfügbar
-		if (options.validateSelections && column.selectionOptions) {
-			const availableOptions = this.parseSelectionOptions(column.selectionOptions);
+		if (options.validateSelections) {
+			var availableOptions = column.selectionOptions;
+			if (column.selectionOptions.length == 0) {
+				//yes/no fields
+				availableOptions = [
+					{
+						id: 0,
+						label: 'no',
+					},
+					{
+						id: 1,
+						label: 'yes',
+					},
+				];
+			}
+
 			const valueArray = Array.isArray(value) ? value : [value];
 
 			for (const val of valueArray) {
-				if (!availableOptions.includes(String(val))) {
-					throw new Error(`Ungültige Auswahl: ${val}. Erlaubt: ${availableOptions.join(', ')}`);
+				if (!availableOptions.some(elem => elem.id == val)) {
+					throw new Error(`Ungültige Auswahl: ${val}. Erlaubt: ${availableOptions.map(elem => elem.id).join(', ')}`);
 				}
 			}
 		}
 
-		// Mehrfachauswahl oder Einfachauswahl
 		if (Array.isArray(value)) {
 			return value.map(v => String(v));
 		}
@@ -262,24 +271,6 @@ export class DataFormatter {
 		}
 
 		return value;
-	}
-
-	/**
-	 * Parst Selection-Optionen aus dem String-Format
-	 */
-	private static parseSelectionOptions(optionsString: string): string[] {
-		try {
-			// Nextcloud Tables speichert Optionen oft als JSON-Array-String
-			if (optionsString.startsWith('[') && optionsString.endsWith(']')) {
-				return JSON.parse(optionsString);
-			}
-
-			// Oder als komma-getrennte Liste
-			return optionsString.split(',').map(opt => opt.trim());
-		} catch (error) {
-			// Fallback: Als einzelne Option behandeln
-			return [optionsString];
-		}
 	}
 
 	/**
